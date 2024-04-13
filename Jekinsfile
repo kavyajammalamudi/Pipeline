@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Ansible on Node1') {
+            agent {
+                label 'master' // Run this stage on the Jenkins master node
+            }
+            steps {
+                sh 'sudo apt update && sudo apt install -y ansible' // Install Ansible
+            }
+        }
+
+        stage('Run Ansible Playbook') {
+            agent {
+                label 'Node1' // Run this stage on Node1
+            }
+            steps {
+                script {
+                    // Define the Ansible playbook content
+                    def playbookContent = '''
+                    ---
+                    - hosts: localhost
+                      tasks:
+                        - name: Install Docker
+                          apt:
+                            name: docker.io
+                            state: present
+
+                        - name: Install Apache/HTTPD
+                          apt:
+                            name: apache2
+                            state: present
+                    '''
+
+                    // Write the Ansible playbook content to a temporary file
+                    writeFile file: 'playbook.yml', text: playbookContent
+
+                    // Run the Ansible playbook
+                    sh 'ansible-playbook playbook.yml'
+                }
+            }
+        }
+    }
+}
+
