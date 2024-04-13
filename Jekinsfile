@@ -36,8 +36,7 @@ pipeline {
                     // Write the Ansible playbook content to a temporary file
                     writeFile file: 'playbook.yml', text: playbookContent
 
-                    // Run the Ansible playbook
-                    sh 'ansible-playbook playbook.yml'
+                   sh 'ansible-playbook playbook.yml'
                 }
             }
         }
