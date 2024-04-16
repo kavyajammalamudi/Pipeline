@@ -1,13 +1,29 @@
 ---
-- hosts: localhost
-  become: true
+- name: Install Docker and Apache on localhost
+  hosts: localhost
+  connection: local
+  become: yes
   tasks:
-    - name: Install Docker
-      apt:
-        name: docker.io
+    - name: Install Docker package
+      yum:
+        name: docker
         state: present
+      ignore_errors: yes
 
-    - name: Install Apache/HTTPD
-      apt:
-        name: apache2
+    - name: Install Apache package
+      yum:
+        name: httpd
         state: present
+      ignore_errors: yes
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Start and enable Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
